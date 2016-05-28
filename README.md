@@ -1,4 +1,4 @@
-Based on [project site](https://metametadata.github.io/carry/examples/#counter) .
+Based on [Carry example project](https://metametadata.github.io/carry/examples/#counter).
 
 ## Build
 
