@@ -1,13 +1,26 @@
 ; namespace is extracted into a separate src folder in order to be reused in elm-ish architecture examples
 (ns counter.core
-  (:require [cljs.core.match :refer-macros [match]])
+  (:require [cljs.core.match :refer-macros [match]]
+            [counter.utils :as utils]
+            [counter.view :as view])
   (:require-macros [reagent.ratom :refer [reaction]]))
 
+
+(def snake {:direction [1 0]
+            :body [[3 2] [2 2] [1 2] [0 2]]})
+(def board [35 25])
 
 (def -initial-model {:val 0
                      :thetime 0
                      :box-value "hello"
-                     :clock-time (js/Date.) })
+                     :clock-time (js/Date.)
+
+                     ;snake game testing
+                     :board board
+                     :snake snake
+                     :points 0
+                     :game true
+                     :point (utils/rand-free-position snake board)})
 
 (defn -control
   [model signal _dispatch-signal dispatch-action]
@@ -56,6 +69,12 @@
    :timer (reaction (str "Time elapsed: " (:thetime @model)))
    :bvalue (reaction (str "1" (:box-value @model)))
    :clock (reaction (:clock-time @model))
+
+   :vboard (reaction (:board @model))
+   :vsnake (reaction (:snake @model))
+   :vpoints (reaction (:points @model))
+   :vgame (reaction (:game @model))
+   :vpoint (reaction (:point @model))
    })
 
 (defn show-time
@@ -73,7 +92,8 @@
   )
 
 (defn view
-  [{:keys [counter timer bvalue clock] :as _view-model} dispatch]
+  [{:keys [counter timer bvalue clock
+           vboard vsnake vpoints vgame vpoint] :as _view-model} dispatch]
   [:p
    @counter " "
    [:button {:on-click #(dispatch :on-increment)} "+"] " "
@@ -102,7 +122,16 @@
      [:input {:type "text"
               :value @bvalue
               :on-change #(dispatch :change-value)}]]]
+
+   ;Snake game begin
+   [:p
+    [:h3 "Snake Game"]
+     [:strong {:style {:color "red"}} "Board: "] (str @vboard) [:strong {:style {:color "red"}} " Snake: "] (str @vsnake) [:strong {:style {:color "red"}} " Points: "]
+    (str @vpoints) [:strong {:style {:color "red"}} " Game: "] (str @vgame) [:strong {:style {:color "red"}} " Point: "] (str @vpoint)]
+   [:div
+    [view/render-board @vboard @vsnake @vpoint]]
    ]
+
  )
 
 (def spec {:initial-model -initial-model

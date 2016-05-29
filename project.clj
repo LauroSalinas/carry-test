@@ -38,4 +38,8 @@
                                        :optimizations  :advanced
                                        :pretty-print   false
                                        :compiler-stats true
-                                       :parallel-build false}}]})
+                                       :parallel-build false}}]}
+  :figwheel {
+             :css-dirs ["resources/public/css"]  ;;watch css stylesheet
+             })
+

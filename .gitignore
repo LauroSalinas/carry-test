@@ -28,7 +28,9 @@ Thumbs.db
 # Project Specific #
 ####################
 figwheel_server.log
-/resources
-/target
-resources/public/js/compiled/out/figwheel/connect.js
-resources/public/js/compiled/out/figwheel/connect.js.map
+counter.iml
+/resources/js/compiled
+/resources/js/compiled/out
+/resources/js/compiled/out/*
+/target/*
+/.idea/*
