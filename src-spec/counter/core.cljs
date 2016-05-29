@@ -108,7 +108,8 @@
      "Input Value: "
      [:input {:type "text"
               :value @bvalue
-              :on-change #(dispatch :change-value)}]]
+              :on-change #(dispatch :change-value)}]
+     ]
 
 
     ]
@@ -116,12 +117,14 @@
      "The time is: "
      [show-time @clock]
      ]
+
    [:p
     [:div
      "Test input: "
      [:input {:type "text"
               :value @bvalue
-              :on-change #(dispatch :change-value)}]]]
+              :on-change #(dispatch :change-value)}]]
+    ]
 
    ;Snake game begin
    [:p
@@ -129,7 +132,10 @@
      [:strong {:style {:color "red"}} "Board: "] (str @vboard) [:strong {:style {:color "red"}} " Snake: "] (str @vsnake) [:strong {:style {:color "red"}} " Points: "]
     (str @vpoints) [:strong {:style {:color "red"}} " Game: "] (str @vgame) [:strong {:style {:color "red"}} " Point: "] (str @vpoint)]
    [:div
+    [view/score @vpoints]
     [view/render-board @vboard @vsnake @vpoint]]
+    [view/game-over @vgame]
+
    ]
 
  )

@@ -17,3 +17,17 @@
     (into [:table.stage {:style {:height 377
                                  :width 527}}]
           cells)))
+
+(defn score
+  "Render player's score"
+  [pscore]
+  [:div.score (str "Score: " pscore)])
+
+(defn game-over
+  "Renders the game over ovelay if the game is finished"
+  [game-running]
+  (if game-running
+    [:div]
+    [:div.overlay
+     [:div.play
+      [:h1 "↺"]]]))
