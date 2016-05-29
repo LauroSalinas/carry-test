@@ -29,8 +29,8 @@ Thumbs.db
 ####################
 figwheel_server.log
 counter.iml
-/resources/js/compiled
-/resources/js/compiled/out
-/resources/js/compiled/out/*
+/resources/public/js/compiled
+/resources/public/js/compiled/out
+/resources/public/js/compiled/out/*
 /target/*
 /.idea/*
