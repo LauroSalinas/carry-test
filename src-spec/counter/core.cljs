@@ -2,7 +2,8 @@
 (ns counter.core
   (:require [cljs.core.match :refer-macros [match]]
             [counter.utils :as utils]
-            [counter.view :as view])
+            [counter.view :as view]
+            [goog.events :as events])
   (:require-macros [reagent.ratom :refer [reaction]]))
 
 
@@ -32,6 +33,13 @@
              (.setInterval js/window #(dispatch-action :inc-time) 1000))
 
            (.setInterval js/window #(dispatch-action :set-clock) 1000)
+
+           (.setInterval js/window #(dispatch-action [:updatesnake (utils/gmove-snake (:snake @model))] ) 150)
+           (events/listen js/window "keydown"
+                          (fn [e]
+                            (let [key-code (.-keyCode e)]
+                              (when (contains? utils/key-code->move key-code)
+                                (dispatch-action [:set-snake-dir (utils/key-code->move key-code)]) ))))
            )
 
          :on-stop nil
@@ -48,6 +56,15 @@
 
          :on-increment-async
          (.setTimeout js/window #(dispatch-action :increment) 1000)
+
+         [:updatesnakebod nsnake]
+         (dispatch-action [:updatesnake nsnake])
+
+         :set-game-over
+         (dispatch-action :gameover)
+
+         [:change-snake-dir newdir]
+         (dispatch-action [:set-snake-dir (utils/change-snake-direction newdir (-> @model :snake :direction))])
   )
 )
 
@@ -55,12 +72,20 @@
 (defn -reconcile
   [model action]
   (match action
-         :change-value (update model :box-value (fn [] (str "there")))
+         :change-value (assoc model :box-value "new")
          :increment (update model :val inc)
          :decrement (update model :val dec)
          :inc-time (update model :thetime inc)
+         :set-clock (assoc model :clock-time (js/Date.))
 
-         :set-clock (update model :clock-time (fn [] (js/Date.)))
+         [:updatesnake newsnake](do
+                                  (if (= true (:game model))
+                                         (assoc model :snake newsnake)
+                                         (model)))
+         :gameover (assoc model :game (not (:game model)))
+         [:set-snake-dir newdir] (update-in model [:snake] assoc :direction (utils/change-snake-direction newdir (-> model :snake :direction)))
+
+
          ))
 
 (defn view-model
@@ -100,6 +125,8 @@
    [:button {:on-click #(dispatch :on-decrement)} "-"] " "
    [:button {:on-click #(dispatch :on-increment-if-odd)} "Increment if odd"] " "
    [:button {:on-click #(dispatch :on-increment-async)} "Increment async"] " "
+   [:button {:on-click #(utils/move-snake @vsnake dispatch)} "Snake move test"] " "
+   [:button {:on-click #(dispatch :set-game-over)} "Toggle game over"]
    [:p
     @timer " "
     ]
@@ -109,6 +136,7 @@
      [:input {:type "text"
               :value @bvalue
               :on-change #(dispatch :change-value)}]
+     @bvalue
      ]
 
 
